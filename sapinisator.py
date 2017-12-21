@@ -4,6 +4,9 @@ import struct
 from math import fabs, sin
 import sys
 
+"""
+Classe réprésentant un point par ses coordonnées.
+"""
 class Point:
     def __init__(self, x, y ,z):
         self.x = x
@@ -19,6 +22,9 @@ class Point:
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y, self.z+other.z)
 
+"""
+Classe représentant un triangle par une liste de trois points.
+"""
 class Triangle:
     def __init__(self, points):
         self.points = points
@@ -26,6 +32,11 @@ class Triangle:
     def __str__(self):
         return("Triangle[" + str(self.points[0]) + ", " + str(self.points[1]) + ", " + str(self.points[2]) + "]")
 
+"""
+Lit le fichier stl passé en paramètre.
+    filename : le fichier à lire
+Retourne la liste des triangles décrits par le fichier.
+"""
 def read_stl(filename):
     triangles = []
 
@@ -52,9 +63,19 @@ def read_stl(filename):
 
         return triangles
 
+"""
+Fonction sapin.
+    x : coordonnée à trandformer
+    s : coefficient de sapinisation
+"""
 def sapin(x, s):
     return x * fabs(sin(s * x)) / 100
 
+"""
+Calcule le point étant la moyenne des points passés en paramètre.
+    points : la liste de points
+Retourne le point moyenne.
+"""
 def moyenne(points):
     moyenne = Point(0, 0, 0)
     nb_points = len(points)
@@ -64,10 +85,20 @@ def moyenne(points):
         moyenne.z += p.z / nb_points
     return moyenne
 
+"""
+Fonction d'agrandissement d'un point selon un facteur.
+    p : le point
+    facteur : le facteur d'agrandissement
+Retourne le point agrandi.
+"""
 def agrandissement(p, facteur):
     return Point((p.x)*facteur, (p.y)*facteur, (p.z))
 
-
+"""
+Sapinise chacun des triangles passés en paramètre.
+    triangles : liste des triangles
+Retourne la liste des triangles sapinisés.
+"""
 def sapinisation(triangles):
     triangles_sapinise = triangles
     ensemble_points = []
@@ -86,12 +117,21 @@ def sapinisation(triangles):
 
     return triangles_sapinise
 
+"""
+Ecrit l'en-tête du fichier stl
+comprenant le commentaire et le nombre de triangles.
+"""
 def stl_entete(source, dest):
      with open(source, "rb") as s:
          head = s.read(84)
      with open(dest, "wb") as d:
          d.write(head)
 
+"""
+Ecrit un triangle dans le fichier stl passé en paramètre.
+    dest : fichier stl de destination
+    triangle : le triangle a écrire
+"""
 def stl_triangle(dest, triangle):
     with open(dest, "ab") as d:
         d.write(struct.pack("<f", 0))
@@ -108,6 +148,12 @@ def stl_triangle(dest, triangle):
         d.write(struct.pack("<f", triangle.points[2].z))
         d.write(struct.pack("<h", 0))
 
+
+"""
+Script principal du sapinisator.
+Prend en argument le nom du fichier à sapiniser
+et du fichier de sortie sur la ligne de commande
+"""
 def main():
     if len(sys.argv) != 3:
         print("Invalid arguments.")
